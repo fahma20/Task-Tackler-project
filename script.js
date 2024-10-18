@@ -1,16 +1,43 @@
 let tasks = [];
 
+
+fetchTasks();
+
 document.getElementById('addButton').addEventListener('click', addTask);
 document.getElementById('toggleSwitch').addEventListener('change', toggleMode);
 
-function addTask() {
+async function fetchTasks() {
+    try {
+        const response = await fetch('http://localhost:3000/tasks'); 
+        tasks = await response.json();
+        console.log('Fetched tasks:', tasks); 
+        displayTasks();
+    } catch (error) {
+        console.error('Error fetching tasks:', error);
+    }
+}
+
+async function addTask() {
     const taskInput = document.getElementById('taskInput');
     const taskText = taskInput.value.trim();
 
     if (taskText) {
-        tasks.push({ text: taskText, completed: false });
-        displayTasks();
-        taskInput.value = '';
+        const newTask = { text: taskText, completed: false };
+
+        try {
+            const response = await fetch('http://localhost:3000/tasks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newTask)
+            });
+            const addedTask = await response.json();
+            console.log('Added task:', addedTask); // 
+            tasks.push(addedTask);
+            displayTasks();
+            taskInput.value = '';
+        } catch (error) {
+            console.error('Error adding task:', error);
+        }
     }
 }
 
@@ -18,7 +45,7 @@ function displayTasks() {
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = '';
 
-    tasks.forEach((task, index) => {
+    tasks.forEach((task) => {
         const li = document.createElement('li');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -45,8 +72,6 @@ function displayTasks() {
 }
 
 function toggleMode() {
-    document.body.classList.toggle('dark-mode'); // Toggle dark mode class
+    document.body.classList.toggle('dark-mode');
 }
 
-// Initialize the display
-displayTasks();
