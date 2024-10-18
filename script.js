@@ -1,43 +1,16 @@
 let tasks = [];
 
-
-fetchTasks();
-
 document.getElementById('addButton').addEventListener('click', addTask);
 document.getElementById('toggleSwitch').addEventListener('change', toggleMode);
 
-async function fetchTasks() {
-    try {
-        const response = await fetch('http://localhost:3000/tasks'); 
-        tasks = await response.json();
-        console.log('Fetched tasks:', tasks); 
-        displayTasks();
-    } catch (error) {
-        console.error('Error fetching tasks:', error);
-    }
-}
-
-async function addTask() {
+function addTask() {
     const taskInput = document.getElementById('taskInput');
     const taskText = taskInput.value.trim();
 
     if (taskText) {
-        const newTask = { text: taskText, completed: false };
-
-        try {
-            const response = await fetch('http://localhost:3000/tasks', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newTask)
-            });
-            const addedTask = await response.json();
-            console.log('Added task:', addedTask); // 
-            tasks.push(addedTask);
-            displayTasks();
-            taskInput.value = '';
-        } catch (error) {
-            console.error('Error adding task:', error);
-        }
+        tasks.push({ text: taskText, completed: false });
+        displayTasks();
+        taskInput.value = '';
     }
 }
 
@@ -45,7 +18,7 @@ function displayTasks() {
     const taskList = document.getElementById('taskList');
     taskList.innerHTML = '';
 
-    tasks.forEach((task) => {
+    tasks.forEach((task, index) => {
         const li = document.createElement('li');
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
@@ -72,6 +45,9 @@ function displayTasks() {
 }
 
 function toggleMode() {
-    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('dark-mode'); 
 }
+
+displayTasks();
+
 
