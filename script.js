@@ -1,21 +1,22 @@
 let tasks = [];
 
 document.getElementById('addButton').addEventListener('click', addTask);
+document.getElementById('toggleSwitch').addEventListener('change', toggleMode);
 
 function addTask() {
     const taskInput = document.getElementById('taskInput');
     const taskText = taskInput.value.trim();
 
     if (taskText) {
-        tasks.push({ text: taskText, completed: false }); // Store task with completed status
-        displayTasks(); // Update the displayed tasks
-        taskInput.value = ''; // Clear input field
+        tasks.push({ text: taskText, completed: false });
+        displayTasks();
+        taskInput.value = '';
     }
 }
 
 function displayTasks() {
     const taskList = document.getElementById('taskList');
-    taskList.innerHTML = ''; // Clear existing tasks
+    taskList.innerHTML = '';
 
     tasks.forEach((task, index) => {
         const li = document.createElement('li');
@@ -24,23 +25,28 @@ function displayTasks() {
         checkbox.checked = task.completed;
 
         checkbox.addEventListener('change', function() {
-            task.completed = checkbox.checked; // Update completed status
+            task.completed = checkbox.checked;
             if (task.completed) {
                 alert(`Congratulations! You completed: "${task.text}"`);
             }
-            displayTasks(); // Refresh the list
+            displayTasks();
         });
 
         li.appendChild(checkbox);
         li.appendChild(document.createTextNode(task.text));
 
-        // Optionally, style completed tasks differently
         if (task.completed) {
-            li.style.textDecoration = 'line-through'; // Strike-through for visual indication
-            li.style.color = 'gray'; // Change color for completed tasks
+            li.style.textDecoration = 'line-through';
+            li.style.color = 'gray';
         }
 
         taskList.appendChild(li);
     });
 }
 
+function toggleMode() {
+    document.body.classList.toggle('dark-mode'); // Toggle dark mode class
+}
+
+// Initialize the display
+displayTasks();
